@@ -71,11 +71,11 @@ def add_employee():
     # Validate required fields
     if not name or not email or not department or not job_title:
         print("Error: All fields are required.")
-    return
+        return
 
     if not is_valid_email(email):
         print("Error: Please enter a valid email address.")
-    return
+        return
 
     connection = create_connection()
 
@@ -115,3 +115,147 @@ def add_employee():
             cursor.close()
 
         connection.close()
+
+
+def update_employee():
+    """Update an existing employee's details."""
+
+    print("\nUPDATE EMPLOYEE")
+    print("-" * 30)
+
+    try:
+        employee_id = int(input("Enter employee ID to update: "))
+    except ValueError:
+        print("Error: Employee ID must be a number.")
+        return
+
+    connection = create_connection()
+
+    if connection is None:
+        print("Could not connect to the database.")
+        return
+
+    cursor = None
+
+    try:
+        cursor = connection.cursor()
+
+        # Check whether the employee exists
+        cursor.execute(
+            "SELECT employee_id FROM employees WHERE employee_id = %s",
+            (employee_id,)
+        )
+
+        if cursor.fetchone() is None:
+            print("Error: Employee not found.")
+            return
+
+        name = input("Enter new name: ").strip()
+        email = input("Enter new email: ").strip()
+        department = input("Enter new department: ").strip()
+        job_title = input("Enter new job title: ").strip()
+
+        if not name or not email or not department or not job_title:
+            print("Error: All fields are required.")
+            return
+
+        if not is_valid_email(email):
+            print("Error: Please enter a valid email address.")
+            return
+
+        query = """
+            UPDATE employees
+            SET name = %s,
+                email = %s,
+                department = %s,
+                job_title = %s
+            WHERE employee_id = %s
+        """
+
+        values = (name, email, department, job_title, employee_id)
+
+        cursor.execute(query, values)
+        connection.commit()
+
+        print("Employee updated successfully!")
+
+    except mysql.connector.IntegrityError:
+        connection.rollback()
+        print("Error: That email address may already belong to another employee.")
+
+    except mysql.connector.Error as error:
+        connection.rollback()
+        print(f"Database error: {error}")
+
+    finally:
+        if cursor is not None:
+            cursor.close()
+
+        connection.close()
+
+
+def deactivate_employee():
+    """Mark an employee as inactive without deleting their history."""
+
+    print("\nDEACTIVATE EMPLOYEE")
+    print("-" * 30)
+
+    try:
+        employee_id = int(input("Enter employee ID to deactivate: "))
+    except ValueError:
+        print("Error: Employee ID must be a number.")
+        return
+
+    connection = create_connection()
+
+    if connection is None:
+        print("Could not connect to the database.")
+        return
+
+    cursor = None
+
+    try:
+        cursor = connection.cursor()
+
+        cursor.execute(
+            """
+            SELECT employment_status
+            FROM employees
+            WHERE employee_id = %s
+            """,
+            (employee_id,)
+        )
+
+        employee = cursor.fetchone()
+
+        if employee is None:
+            print("Error: Employee not found.")
+            return
+
+        if employee[0] == "Inactive":
+            print("This employee is already inactive.")
+            return
+
+        cursor.execute(
+            """
+            UPDATE employees
+            SET employment_status = 'Inactive'
+            WHERE employee_id = %s
+            """,
+            (employee_id,)
+        )
+
+        connection.commit()
+        print(f"Employee ID {employee_id} deactivated successfully.")
+
+    except mysql.connector.Error as error:
+        connection.rollback()
+        print(f"Database error: {error}")
+
+    finally:
+        if cursor is not None:
+            cursor.close()
+
+        connection.close()
+
+

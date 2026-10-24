@@ -1,3 +1,4 @@
+from services.assignment_service import assign_task
 from services.employee_service import (
     add_employee,
     deactivate_employee,
@@ -20,6 +21,7 @@ print("5. View all tasks")
 print("6. Create a new task")
 print("7. Update task status")
 print("8. Search and filter tasks")
+print("9. Assign task to employee")
 
 choice = input("Enter your choice: ").strip()
 
@@ -39,5 +41,7 @@ elif choice == "7":
     update_task_status()
 elif choice == "8":
     search_tasks()
+elif choice == "9":
+    assign_task()
 else:
     print("Invalid choice.")

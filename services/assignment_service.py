@@ -4,7 +4,10 @@ import mysql.connector
 from database_connection.connection import create_connection
 
 
-def assign_task():
+def assign_task(user):
+    if not user or user.get("role") != "Admin":
+        print("Access denied. Only Admin can assign tasks.")
+        return
     """Assign a task to an active employee."""
 
     print("\nASSIGN TASK TO EMPLOYEE")

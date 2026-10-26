@@ -62,7 +62,11 @@ def get_all_tasks():
 
         connection.close()
 
-def create_task():
+def create_task(user):
+    
+    if not user or user.get("role") != "Admin":
+        print("Access denied. Only Admin can create tasks.")
+        return
     """Create a new task and save it in MySQL."""
 
     print("\nCREATE NEW TASK")

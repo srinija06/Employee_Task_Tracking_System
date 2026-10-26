@@ -4,7 +4,10 @@ import mysql.connector
 from database_connection.connection import create_connection
 
 
-def view_overdue_tasks():
+def view_overdue_tasks(user):
+    if not user or user.get("role") != "Admin":
+        print("Access denied. Only Admin can view this report.")
+        return
     """Display tasks that are overdue and not completed."""
 
     print("\nOVERDUE TASKS REPORT")
@@ -73,7 +76,10 @@ def view_overdue_tasks():
         connection.close()
 
 
-def view_employee_task_report():
+def view_employee_task_report(user):
+    if not user or user.get("role") != "Admin":
+        print("Access denied. Only Admin can view this report.")
+        return
     """Display task counts and assignments for each employee."""
 
     print("\nEMPLOYEE TASK REPORT")
@@ -153,7 +159,10 @@ def view_employee_task_report():
         connection.close()
 
 
-def view_task_completion_summary():
+def view_task_completion_summary(user):
+    if not user or user.get("role") != "Admin":
+        print("Access denied. Only Admin can view this report.")
+        return
     """Display the number of tasks in each status."""
 
     print("\nTASK COMPLETION SUMMARY")

@@ -159,8 +159,14 @@ def update_my_task_status(user):
             UPDATE tasks
             SET status = %s
             WHERE task_id = %s
+            AND EXISTS (
+                SELECT 1
+                FROM task_assignments
+                WHERE task_assignments.task_id = tasks.task_id
+                    AND task_assignments.employee_id = %s
+            )
             """,
-            (new_status, task_id)
+            (new_status, task_id, employee_id)
         )
 
         cursor.execute(

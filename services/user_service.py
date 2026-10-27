@@ -8,11 +8,11 @@ from database_connection.connection import create_connection
 
 
 def create_employee_account(user):
+    """Allow an administrator to create a login account for an employee."""
+
     if not user or user.get("role") != "Admin":
         print("Access denied. Only Admin can create employee accounts.")
         return
-    """Allow an administrator to create a login account for an employee."""
-
     print("\nCREATE EMPLOYEE LOGIN ACCOUNT")
     print("-" * 40)
 
